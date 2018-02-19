@@ -5,6 +5,7 @@ const cookieSession = require("cookie-session");
 const passport = require("passport");
 const bodyParser = require("body-parser");
 require("./models/User");
+require("./models/Survey");
 //Since the following file returns no value, you only need the require statement
 require("./services/passport");
 
@@ -30,6 +31,7 @@ mongoose.connect(process.env.MONGODB_URI || keys.mongodbURI, {
 
 require("./routes/authRoutes")(app);
 require("./routes/billingRoutes")(app);
+require("./routes/surveyRoutes")(app);
 // Configuration to make sure express operates
 // correctly when in the production environment.
 if (process.env.NODE_ENV === "production") {
