@@ -1,4 +1,4 @@
-# ReactSandbox
+# Emaily
 Survey Email App
 
 Heroku URL:
