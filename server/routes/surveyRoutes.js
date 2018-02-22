@@ -1,3 +1,7 @@
+const _ = require("lodash");
+const Path = require("path-parser");
+// 'url' is a default or integrated module in the node.js system
+const { URL } = require("url");
 const mongoose = require("mongoose");
 const requireLogin = require("../middlewares/requireLogin");
 const requireCredits = require("../middlewares/requireCredits");
@@ -14,8 +18,45 @@ const Survey = mongoose.model("surveys");
 // out. Then the send function  (inside Mailer.js)
 // pauses until a respone is recieved.
 module.exports = app => {
-	app.get("/api/surveys/thanks", (req, res) => {
+	app.get("/api/surveys/:surveyId/:choice", (req, res) => {
 		res.send("Thanks for your input!");
+	});
+
+	app.post("/api/surveys/webhooks", (req, res) => {
+		const p = new Path("/api/surveys/:surveyId/:choice");
+
+		_.chain(req.body)
+			.map(({ email, url }) => {
+				const match = p.test(new URL(url).pathname);
+				if (match) {
+					return {
+						email,
+						surveyId: match.surveyId,
+						choice: match.choice
+					};
+				}
+			})
+			// Compact function - takes an array and removes any undefined elements from it.
+			.compact()
+			.uniqBy("email", "surveyId")
+			.each(({ surveyId, email, choice }) => {
+				Survey.updateOne(
+					{
+						_id: surveyId,
+						recipients: {
+							$elemMatch: { email: email, responded: false }
+						}
+					},
+					{
+						$inc: { [choice]: 1 },
+						$set: { "recipients.$.responded": true },
+						lastResponded: new Date()
+					}
+				).exec();
+			})
+			.value();
+
+		res.send({});
 	});
 
 	app.post("/api/surveys", requireLogin, requireCredits, async (req, res) => {
