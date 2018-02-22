@@ -13,6 +13,8 @@ This app uses the following technologies:
  3. Mongo and Mongoose
  4. Redux
  5. Passport
+ 6. Webpack
+ 7. Babel
  
  This app uses the following APIs:
  1. SendGrid API
