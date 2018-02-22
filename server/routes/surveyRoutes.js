@@ -9,14 +9,7 @@ const Mailer = require("../services/Mailer");
 const surveyTemplate = require("../services/emailTemplates/surveyTemplate");
 
 const Survey = mongoose.model("surveys");
-//need to make sure functions are run in order
-// to do this we use async and await
-// How it works:
-// when the code reaches mailer.send() the code is
-// 'paused'. The send function is executed with
-// the request being created. the request is sent
-// out. Then the send function  (inside Mailer.js)
-// pauses until a respone is recieved.
+
 module.exports = app => {
 	app.get("/api/surveys", requireLogin, async (req, res) => {
 		const surveys = await Survey.find({ _user: req.user.id }).select({
