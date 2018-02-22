@@ -1,6 +1,8 @@
 # Emaily
 Survey Email App
 
+Created following tutorial on Udemy.com: Node with React: Fullstack Web Development
+
 Heroku URL:
 https://nameless-sands-41702.herokuapp.com/
 
